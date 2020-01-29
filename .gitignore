@@ -4,3 +4,4 @@ include
 lib
 coctl.egg-info
 pyvenv.cfg
+.vscode

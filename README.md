@@ -1,4 +1,4 @@
-# An CLI tool for the Opsani Optimization API: otctl
+# An CLI tool for the Opsani Optimization API: coctl
 
 This is a simple application that can consume an Opsani service configuration and post it to the domain/app, or query the service for the current domain/app configurations.
 
