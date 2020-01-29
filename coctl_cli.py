@@ -23,21 +23,20 @@ limitations under the License.
 '''
 
 @click.group()
-@click.option('--file', '-f', type=click.File('w'), help='The name of the config file or "otconfig.yaml" by default', default='otconfig.yaml')
 @click.option('--token', '-t', help='The Optune app token (or OT_TOKEN environment variable)', envvar='OT_TOKEN')
 @click.option('--domain', '-d', help='The Optune domain (or OT_DOMAIN enviornment varaible)', envvar='OT_DOMAIN')
 @click.option('--app', '-a', help='The Optune application (or OT_APP environment variable)', envvar='OT_APP')
 @click.pass_context
-def cli(ctx,file,token,domain,app):
+def cli(ctx,token,domain,app):
     ctx.ensure_object(dict)
-    ctx.obj['file']=file
     ctx.obj['token']=token
     ctx.obj['domain']=domain
     ctx.obj['app']=app
 
 @cli.command()
+@click.option('--file', '-f', type=click.File('w'), help='The name of the config file or "coconfig.yaml" by default', default='coconfig.yaml')
 @click.pass_context
-def get(ctx):
+def get(ctx,file):
 
     """Get the latest config from the API"""
     click.echo("Getting the configuration")
@@ -47,14 +46,29 @@ def get(ctx):
         headers={"Content-type": "application/merge-patch+json",
             "Authorization": f"Bearer {ctx.obj['token']}"}
     )
-    click.echo(response.content)
+    data=response.json()
+    click.echo(yaml.dump(data))
+    yaml.dump(data,file)
+
+    
 
 @cli.command()
+@click.option('--file', '-f', type=click.File('r'), help='The name of the config file or "coconfig.yaml" by default', default='coconfig.yaml')
 @click.pass_context
-def put(ctx):
+def put(ctx,file):
 
     """Push the config file, or config patch to the API"""
-    click.echo("This would push the config")
+    click.echo(f"Push {file.name} as a patch to the API")
+    data=yaml.load(file, Loader=yaml.FullLoader)
+    click.echo(data)
+    url=f"https://api.optune.ai/accounts/{ctx.obj['domain']}/applications/{ctx.obj['app']}/config/"
+    response=requests.get(
+        url,
+        headers={"Content-type": "application/merge-patch+json",
+            "Authorization": f"Bearer {ctx.obj['token']}"},
+        json=data
+    )
+    click.echo(response.status_code)
 
 @cli.command()
 @click.pass_context
