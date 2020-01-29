@@ -1,8 +1,8 @@
 from setuptools import setup
 
-setup ( name='otctl',
+setup ( name='coctl',
   version='0.1',
-  py_modules=['otctl_cli'],
+  py_modules=['coctl_cli'],
   install_requires=[
       'Click',
       'PyYAML',
@@ -10,6 +10,6 @@ setup ( name='otctl',
   ],
   entry_points='''
     [console_scripts]
-    otctl=otctl_cli:cli
+    coctl=coctl_cli:cli
     '''
 )

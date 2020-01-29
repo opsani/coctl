@@ -2,9 +2,10 @@ import click
 import requests
 import yaml
 import os
-```
+'''
 An CLI tool for the Opsani Optimization API.
-otctl
+
+coctl: Continuous Optimization Control
 
 Copyright 2020 Robert Starmer, Kumulus Technologies
 
@@ -19,7 +20,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-```
+'''
 
 @click.group()
 @click.option('--file', '-f', type=click.File('w'), help='The name of the config file or "otconfig.yaml" by default', default='otconfig.yaml')

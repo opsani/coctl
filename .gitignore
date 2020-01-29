@@ -2,5 +2,5 @@ __pycache__
 bin
 include
 lib
-otctl.egg-info
+coctl.egg-info
 pyvenv.cfg
