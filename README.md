@@ -13,7 +13,8 @@ It is recommended that you launch this in a Docker container, or deploy in a pyt
 ```bash
 python3 -m venv .
 . bin/activate
-python3 -m pip install .
+python3 -m pip install -e .
+python3 -m pip install -r requirements.txt
 ```
 
 ## Basic usage
