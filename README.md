@@ -42,4 +42,5 @@ otctl restart
 
 1. Write the configuration to a file with `get` if a -f or --file parameter is passed
 2. Read from a configuration (YAML) file with `put` if -f or --file is passed, or use config.yaml as a default if no file parameter is passed
-3. Basic configuration validation
+3. Add a Dockerfile and instructions
+4. Basic configuration validation
