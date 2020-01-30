@@ -48,7 +48,6 @@ def get(ctx,file):
             "Authorization": f"Bearer {ctx.obj['token']}"}
     )
     data=response.json()
-    click.echo(yaml.dump(data))
     yaml.dump(data,file)
 
 @cli.command()

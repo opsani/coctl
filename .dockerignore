@@ -1,0 +1,8 @@
+__pycache__
+bin
+include
+lib
+coctl.egg-info
+pyvenv.cfg
+.vscode
+*yaml

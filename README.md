@@ -4,7 +4,11 @@ This is a simple application that can consume an Opsani service configuration an
 
 ## Work in progress
 
-Currently only config read (get) and optimization restart (restart) are supported.
+Basic get (download current configuration), and put (apply a patch to the upstream config, merge with what's there) is aavailable.  there's also a restart function, but that could also be handled by passing a null '{}' document to put.
+
+Inputs are not validated
+Error handling could certainly be improved
+
 
 ## Installation
 
@@ -14,7 +18,13 @@ It is recommended that you launch this in a Docker container, or deploy in a pyt
 python3 -m venv .
 . bin/activate
 python3 -m pip install -e .
-python3 -m pip install -r requirements.txt
+```
+
+or:
+
+```bash
+docker build . -t coctl:latest
+alias coctl='docker run -it --rm --name coctl -v $(pwd)/:/work coctl:latest '
 ```
 
 ## Basic usage
@@ -25,6 +35,12 @@ Export the configuration (or pass as CLI parameters):
 export CO_TOKEN=ASFDASDFASDFASDF
 export CO_DOMAIN=domain.name
 export CO_APP=app.name
+```
+
+For Docker use, set an alias _after_ setting the environment variables, and you won't have to pass the env variables:
+
+```bash
+alias coctl="docker run -it --rm --name coctl -v $(pwd)/:/work/ -e CO_TOKEN=$CO_TOKEN -e CO_DOMAIN=$CO_DOMAIN -e CO_APP=$CO_APP coctl:latest "
 ```
 
 ### Get config
@@ -74,5 +90,6 @@ coctl restart
 
 ## TODO
 
-1. Add a Dockerfile and instructions
-2. Basic configuration validation
+1. Basic configuration validation
+2. Basic environment variable validation
+3. Remove the need for the --file option, treat as an argument instead
