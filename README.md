@@ -22,26 +22,57 @@ python3 -m pip install -r requirements.txt
 Export the configuration (or pass as CLI parameters):
 
 ```bash
-export OT_TOKEN=ASFDASDFASDFASDF
-export OT_DOMAIN=domain.name
-export OT_APP=app.name
+export CO_TOKEN=ASFDASDFASDFASDF
+export CO_DOMAIN=domain.name
+export CO_APP=app.name
 ```
+
+### Get config
 
 Get the current configuration from your domain/app:
 
 ```bash
-otctl get
+coctl get
 ```
+
+Get the current config to a specific file:
+
+```bash
+coctl get -f config-state.yaml
+```
+
+### Put config
+
+Put a YAML config in `coconfig.yaml` to the app config first get the config, then re-put it to the application endpoint.
+
+```bash
+coctl get
+coctl put
+```
+
+For a YAML document with a specific `perf:` metric, update the `optimization:` configuration
+
+```bash
+cat > optimization.yaml <<EOF
+optimization:
+  mode: saturation
+  perf: metrics['requests throughput']
+EOF
+```
+
+```bash
+coctl put -f optimization.yaml
+```
+
+### Change just the optimiization
 
 Restart the optimization:
 
 ```bash
-otctl restart
+coctl restart
 ```
 
 ## TODO
 
-1. Write the configuration to a file with `get` if a -f or --file parameter is passed
-2. Read from a configuration (YAML) file with `put` if -f or --file is passed, or use config.yaml as a default if no file parameter is passed
 3. Add a Dockerfile and instructions
 4. Basic configuration validation

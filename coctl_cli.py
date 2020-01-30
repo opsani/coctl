@@ -1,6 +1,7 @@
 import click
 import requests
 import yaml
+import json
 import os
 '''
 An CLI tool for the Opsani Optimization API.
@@ -23,9 +24,9 @@ limitations under the License.
 '''
 
 @click.group()
-@click.option('--token', '-t', help='The Optune app token (or OT_TOKEN environment variable)', envvar='OT_TOKEN')
-@click.option('--domain', '-d', help='The Optune domain (or OT_DOMAIN enviornment varaible)', envvar='OT_DOMAIN')
-@click.option('--app', '-a', help='The Optune application (or OT_APP environment variable)', envvar='OT_APP')
+@click.option('--token', '-t', help='The Optune app token (or OT_TOKEN environment variable)', envvar='CO_TOKEN')
+@click.option('--domain', '-d', help='The Optune domain (or OT_DOMAIN enviornment varaible)', envvar='CO_DOMAIN')
+@click.option('--app', '-a', help='The Optune application (or OT_APP environment variable)', envvar='CO_APP')
 @click.pass_context
 def cli(ctx,token,domain,app):
     ctx.ensure_object(dict)
@@ -50,8 +51,6 @@ def get(ctx,file):
     click.echo(yaml.dump(data))
     yaml.dump(data,file)
 
-    
-
 @cli.command()
 @click.option('--file', '-f', type=click.File('r'), help='The name of the config file or "coconfig.yaml" by default', default='coconfig.yaml')
 @click.pass_context
@@ -59,16 +58,18 @@ def put(ctx,file):
 
     """Push the config file, or config patch to the API"""
     click.echo(f"Push {file.name} as a patch to the API")
-    data=yaml.load(file, Loader=yaml.FullLoader)
+    data=json.dumps(yaml.load(file, Loader=yaml.FullLoader))
     click.echo(data)
     url=f"https://api.optune.ai/accounts/{ctx.obj['domain']}/applications/{ctx.obj['app']}/config/"
-    response=requests.get(
+    response=requests.put(
         url,
+        params={'reset': 'true', 'patch': 'true'},
         headers={"Content-type": "application/merge-patch+json",
             "Authorization": f"Bearer {ctx.obj['token']}"},
-        json=data
+        data=data
     )
-    click.echo(response.status_code)
+    #click.echo(response.requests.body)
+    click.echo(response.json())
 
 @cli.command()
 @click.pass_context
@@ -84,10 +85,7 @@ def restart(ctx):
         headers={"Content-type": "application/merge-patch+json",
             "Authorization": f"Bearer {ctx.obj['token']}"}
     )
-    print(response.request.body)
-    print(response.request.headers)
-    print(response.request.url)
-    json_response=response.json()
+
     click.echo(f"we got {response.json()}")
 
 if __name__ == '__main__':
