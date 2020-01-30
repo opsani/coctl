@@ -6,7 +6,7 @@ setup ( name='coctl',
   install_requires=[
       'Click',
       'PyYAML',
-      'request',
+      'requests',
   ],
   entry_points='''
     [console_scripts]
