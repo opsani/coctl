@@ -74,5 +74,5 @@ coctl restart
 
 ## TODO
 
-3. Add a Dockerfile and instructions
-4. Basic configuration validation
+1. Add a Dockerfile and instructions
+2. Basic configuration validation
