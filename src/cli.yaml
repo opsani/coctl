@@ -1,0 +1,111 @@
+name: coctl
+version: "0.1.1"
+author: Robert Starmer <robert@opsani.com>
+about: Supports basic operations against the Opsani API for application optimization
+args:
+    
+subcommands:
+    - restart:
+        about: get configuration data from the Opsani API
+        args:
+        - config:
+            short: c
+            long: config
+            value_name: FILE
+            help: Sets a custom config file
+            takes_value: true
+            default_value: .coctl.ini
+        - context:
+            short: C
+            long: context
+            default_value: default
+            help: Set the context for multiple account/app combinations
+        - token:
+            short: t
+            long: token
+            help: sets the application Token
+        - account:
+            short: A
+            long: account
+            help: sets the application Account
+        - app:
+            short: a
+            long: app
+            help: sets the application name 
+        - debug:
+            short: d
+            long: debug
+            help: print debug information
+    - get:
+        about: get configuration data from the Opsani API
+        args:
+        - config:
+            short: c
+            long: config
+            value_name: FILE
+            help: Sets a custom config file
+            takes_value: true
+            default_value: .coctl.ini
+        - context:
+            short: C
+            long: context
+            default_value: default
+            help: Set the context for multiple account/app combinations
+        - token:
+            short: t
+            long: token
+            help: sets the application Token
+        - account:
+            short: A
+            long: account
+            help: sets the application Account
+        - app:
+            short: a
+            long: app
+            help: sets the application name 
+        - debug:
+            short: d
+            long: debug
+            help: print debug information
+        - INPUT:
+            help: Sets the file to use for input or output
+            required: false
+            default_value: coconfig.yaml
+            index: 1
+    - put:
+        about: update the remote config based on a local .yaml document
+        args:
+        - config:
+            short: c
+            long: config
+            value_name: FILE
+            help: Sets a custom config file
+            takes_value: true
+            default_value: .coctl.ini
+        - context:
+            short: C
+            long: context
+            default_value: default
+            help: Set the context for multiple account/app combinations
+        - token:
+            short: t
+            long: token
+            help: sets the application Token
+        - account:
+            short: A
+            long: account
+            help: sets the application Account
+        - app:
+            short: a
+            long: app
+            help: sets the application name 
+        - debug:
+            short: d
+            long: debug
+            help: print debug information
+        - INPUT:
+            help: Sets the file to use for input or output
+            required: false
+            default_value: coconfig.yaml
+            index: 1
+                
