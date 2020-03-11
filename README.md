@@ -15,16 +15,17 @@ Error handling could certainly be improved
 It is recommended that you launch this in a Docker container, or deploy in a python virtual environment:
 
 ```bash
-python3 -m venv .
-. bin/activate
-python3 -m pip install -e .
+mkdir -p ~/.pyenv
+python3 -m venv ~/.pyenv/coctl/
+. ~/.pyenv/coctl/bin/activate
+python3 -m pip install .
 ```
 
 or:
 
 ```bash
 docker build . -t coctl:latest
-alias coctl='docker run -it --rm --name coctl -v $(pwd)/:/work coctl:latest '
+alias coctl='docker run -it --rm --name coctl -v \$(pwd)/:/work coctl:latest '
 ```
 
 ## Basic usage
@@ -40,7 +41,7 @@ export CO_APP=app.name
 For Docker use, set an alias _after_ setting the environment variables, and you won't have to pass the env variables:
 
 ```bash
-alias coctl="docker run -it --rm --name coctl -v $(pwd)/:/work/ -e CO_TOKEN=$CO_TOKEN -e CO_DOMAIN=$CO_DOMAIN -e CO_APP=$CO_APP coctl:latest "
+alias coctl="docker run -it --rm --name coctl -v \$(pwd)/:/work/ -e CO_TOKEN=$CO_TOKEN -e CO_DOMAIN=$CO_DOMAIN -e CO_APP=$CO_APP coctl:latest "
 ```
 
 ### Get config
