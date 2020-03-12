@@ -3,6 +3,7 @@ import requests
 import yaml
 import json
 import os
+import sys
 '''
 An CLI tool for the Opsani Optimization API.
 
@@ -42,23 +43,43 @@ def get(ctx,file):
 
 @cli.command()
 @click.option('--file', '-f', type=click.File('r'), help='The name of the config file or "coconfig.yaml" by default', default='coconfig.yaml')
+@click.option('--overwrite', '-o', help='Overwrite the API state', is_flag=True)
+@click.option('--restart', '-r', help='Restart Optimization', is_flag=True)
 @click.pass_context
-def put(ctx,file):
+def put(ctx,file,overwrite,restart):
 
     """Push the config file, or config patch to the API"""
     click.echo(f"Push {file.name} as a patch to the API")
     data=json.dumps(yaml.load(file, Loader=yaml.FullLoader))
     click.echo(data)
+    headers={}
+    params={}
+    headers.update({"Authorization": f"Bearer {ctx.obj['token']}"})
+
+    if overwrite:
+        click.echo("Overwriting the API state")
+        headers.update({"Content-type": "application/json"})
+    else:
+        click.echo("Appending changes to the API state")
+        params.update({'patch': 'true'})
+        headers.update({"Content-type": "application/merge-patch+json"})
+        print(headers)
+    if restart:
+        click.echo("Restart Optimization")
+        params.update({'reset': 'true'})
+        print(params)
+    else:
+        params.update({'reset': 'false'})
+        click.echo("Optimization not restarted")
+
     url=f"https://api.optune.ai/accounts/{ctx.obj['domain']}/applications/{ctx.obj['app']}/config/"
     response=requests.put(
         url,
-        params={'reset': 'true', 'patch': 'true'},
-        headers={"Content-type": "application/merge-patch+json",
-            "Authorization": f"Bearer {ctx.obj['token']}"},
+        params=params,
+        headers=headers,
         data=data
     )
-    #click.echo(response.requests.body)
-    click.echo(response.json())
+    #click.echo(response.json())
 
 @cli.command()
 @click.pass_context
@@ -74,8 +95,7 @@ def restart(ctx):
         headers={"Content-type": "application/merge-patch+json",
             "Authorization": f"Bearer {ctx.obj['token']}"}
     )
-
-    click.echo(f"we got {response.json()}")
+    click.echo(f"The API response: {response.json()}")
 
 if __name__ == '__main__':
     cli(obj={})
