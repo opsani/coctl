@@ -79,20 +79,51 @@ def put(ctx,file,overwrite,restart):
         headers=headers,
         data=data
     )
-    #click.echo(response.json())
+    click.echo(f"The API response: {response.json()}")
 
 @cli.command()
 @click.pass_context
 def restart(ctx):
 
-    """Reset the app service and restart the optimization"""
-    click.echo("Restarting the optimization service")
+    """Start the app service"""
+    click.echo("Starting the optimization service")
     url=f"https://api.optune.ai/accounts/{ctx.obj['domain']}/applications/{ctx.obj['app']}/config"
     response=requests.put(
         url,
         params={'reset':'true','patch':'true'},
         json={},
         headers={"Content-type": "application/merge-patch+json",
+            "Authorization": f"Bearer {ctx.obj['token']}"}
+    )
+    click.echo(f"The API response: {response.json()}")
+
+@cli.command()
+@click.pass_context
+def stop(ctx):
+
+    """Stop the app service"""
+    click.echo("Restarting the optimization service")
+    url=f"https://api.optune.ai/accounts/{ctx.obj['domain']}/applications/{ctx.obj['app']}/state"
+    response=requests.patch(
+        url,
+        data=json.dumps({'target_state':'stopped'}),
+        json={},
+        headers={"Content-type": "application/json",
+            "Authorization": f"Bearer {ctx.obj['token']}"}
+    )
+    click.echo(f"The API response: {response.json()}")
+@cli.command()
+@click.pass_context
+def start(ctx):
+
+    """Reset the app service and restart the optimization"""
+    click.echo("Restarting the optimization service")
+    url=f"https://api.optune.ai/accounts/{ctx.obj['domain']}/applications/{ctx.obj['app']}/state"
+    response=requests.patch(
+        url,
+        data=json.dumps({'target_state':'running'}),
+        json={},
+        headers={"Content-type": "application/json",
             "Authorization": f"Bearer {ctx.obj['token']}"}
     )
     click.echo(f"The API response: {response.json()}")
