@@ -9,7 +9,7 @@ An CLI tool for the Opsani Optimization API.
 
 coctl: Continuous Optimization Control
 
-Copyright 2020 Opsani, Inc.
+Copyright 2020 Opsani
 
 Licensed under the BSD-3-Clause license
 '''
