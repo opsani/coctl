@@ -3,7 +3,10 @@
 # Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
 #-------------------------------------------------------------------------------------------------------------
 
-FROM rust:1
+FROM python:3
+
+# Avoid warnings by switching to noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 # This Dockerfile adds a non-root user with sudo access. Use the "remoteUser"
 # property in devcontainer.json to use it. On Linux, the container user's GID/UIDs
@@ -13,22 +16,24 @@ ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-# Avoid warnings by switching to noninteractive
-ENV DEBIAN_FRONTEND=noninteractive
+# Uncomment the following COPY line and the corresponding lines in the `RUN` command if you wish to
+# include your requirements in the image itself. It is suggested that you only do this if your
+# requirements rarely (if ever) change.
+# COPY requirements.txt /tmp/pip-tmp/
 
 # Configure apt and install packages
 RUN apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog 2>&1 \
     #
-    # Verify git, needed tools installed
+    # Verify git, process tools, lsb-release (common in install instructions for CLIs) installed
     && apt-get -y install git openssh-client less iproute2 procps lsb-release \
     #
-    # Install lldb, vadimcn.vscode-lldb VSCode extension dependencies
-    && apt-get install -y lldb python3-minimal libpython3.7 \
+    # Install pylint
+    && pip --disable-pip-version-check --no-cache-dir install pylint \
     #
-    # Install Rust components
-    && rustup update 2>&1 \
-    && rustup component add rls rust-analysis rust-src rustfmt clippy 2>&1 \
+    # Update Python environment based on requirements.txt
+    # && pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
+    # && rm -rf /tmp/pip-tmp \
     #
     # Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.
     && groupadd --gid $USER_GID $USERNAME \
@@ -45,3 +50,5 @@ RUN apt-get update \
 
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=dialog
+
+
