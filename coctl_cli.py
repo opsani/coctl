@@ -4,10 +4,12 @@ import yaml
 import json
 import os
 import sys
-'''
-An CLI tool for the Opsani Optimization API.
+import tempfile
 
-coctl: Continuous Optimization Control
+'''
+An CLI tool for the Opsani Optimization Service.
+
+coctl: Continuous Optimization ConTroL
 
 Copyright 2020 Opsani
 
@@ -26,32 +28,31 @@ def cli(ctx,token,domain,app):
     ctx.obj['app']=app
 
 @cli.command()
-@click.option('--file', '-f', type=click.File('w'), help='The name of the config file or "coconfig.yaml" by default', default='coconfig.yaml')
+@click.option('--file', '-f', type=click.File('w'), help='The name of the override config file or "coconfig.yaml" by default', default='coconfig.yaml')
 @click.pass_context
 def get(ctx,file):
 
-    """Get the latest config from the API"""
-    click.echo("Getting the configuration")
+    """Get the latest override config from the Opsani service"""
+    click.echo(f"# Storing the override configuration to {file.name}")
     url=f"https://api.optune.ai/accounts/{ctx.obj['domain']}/applications/{ctx.obj['app']}/config/"
     response=requests.get(
         url,
         headers={"Content-type": "application/merge-patch+json",
             "Authorization": f"Bearer {ctx.obj['token']}"}
     )
-    data=response.json()
-    yaml.dump(data,file)
+    yaml.dump(response.json(),file)
+    #click.echo(f"The API response: {response.json()}")
 
 @cli.command()
-@click.option('--file', '-f', type=click.File('r'), help='The name of the config file or "coconfig.yaml" by default', default='coconfig.yaml')
+@click.option('--file', '-f', type=click.File('r'), help='The name of the overrid config file or "coconfig.yaml" by default', default='coconfig.yaml')
 @click.option('--overwrite', '-o', help='Overwrite the API state', is_flag=True)
 @click.option('--restart', '-r', help='Restart Optimization', is_flag=True)
 @click.pass_context
 def put(ctx,file,overwrite,restart):
 
-    """Push the config file, or config patch to the API"""
+    """Push the override config and (optional: restart) the Opsani service"""
     click.echo(f"Push {file.name} as a patch to the API")
     data=json.dumps(yaml.load(file, Loader=yaml.FullLoader))
-    click.echo(data)
     headers={}
     params={}
     headers.update({"Authorization": f"Bearer {ctx.obj['token']}"})
@@ -79,13 +80,13 @@ def put(ctx,file,overwrite,restart):
         headers=headers,
         data=data
     )
-    click.echo(f"The API response: {response.json()}")
+    #click.echo(f"The API response: {response.json()}")
 
 @cli.command()
 @click.pass_context
 def restart(ctx):
 
-    """Start the app service"""
+    """Start the Opsani service"""
     click.echo("Starting the optimization service")
     url=f"https://api.optune.ai/accounts/{ctx.obj['domain']}/applications/{ctx.obj['app']}/config"
     response=requests.put(
@@ -95,14 +96,14 @@ def restart(ctx):
         headers={"Content-type": "application/merge-patch+json",
             "Authorization": f"Bearer {ctx.obj['token']}"}
     )
-    click.echo(f"The API response: {response.json()}")
+    #click.echo(f"The API response: {response.json()}")
 
 @cli.command()
 @click.pass_context
 def stop(ctx):
 
-    """Stop the app service"""
-    click.echo("Restarting the optimization service")
+    """Stop the Opsani service"""
+    click.echo("Stopping the optimization service")
     url=f"https://api.optune.ai/accounts/{ctx.obj['domain']}/applications/{ctx.obj['app']}/state"
     response=requests.patch(
         url,
@@ -111,18 +112,33 @@ def stop(ctx):
         headers={"Content-type": "application/json",
             "Authorization": f"Bearer {ctx.obj['token']}"}
     )
-    click.echo(f"The API response: {response.json()}")
+    #click.echo(f"The API response: {response.json()}")
+
 @cli.command()
 @click.pass_context
 def start(ctx):
 
-    """Reset the app service and restart the optimization"""
-    click.echo("Restarting the optimization service")
+    """ Start the Opsani service if stopped"""
+    click.echo("Starting the optimization service")
     url=f"https://api.optune.ai/accounts/{ctx.obj['domain']}/applications/{ctx.obj['app']}/state"
     response=requests.patch(
         url,
         data=json.dumps({'target_state':'running'}),
         json={},
+        headers={"Content-type": "application/json",
+            "Authorization": f"Bearer {ctx.obj['token']}"}
+    )
+    #click.echo(f"The API response: {response.json()}")
+
+@cli.command()
+@click.pass_context
+def status(ctx):
+
+    """Get the state of the Opsani service"""
+    click.echo("Getting the optimization service status")
+    url=f"https://api.optune.ai/accounts/{ctx.obj['domain']}/applications/{ctx.obj['app']}/state"
+    response=requests.get(
+        url,
         headers={"Content-type": "application/json",
             "Authorization": f"Bearer {ctx.obj['token']}"}
     )
