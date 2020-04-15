@@ -64,11 +64,9 @@ def put(ctx,file,overwrite,restart):
         click.echo("Appending changes to the API state")
         params.update({'patch': 'true'})
         headers.update({"Content-type": "application/merge-patch+json"})
-        print(headers)
     if restart:
         click.echo("Restart Optimization")
         params.update({'reset': 'true'})
-        print(params)
     else:
         params.update({'reset': 'false'})
         click.echo("Optimization not restarted")
