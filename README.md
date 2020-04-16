@@ -17,14 +17,14 @@ It is recommended that you launch this in a Docker container, or deploy in a pyt
 ```bash
 python3 -m venv .
 . bin/activate
-python3 -m pip install -e .
+python3 -m pip install  .
 ```
 
 or:
 
 ```bash
-docker build . -t coctl:latest
-alias coctl='docker run -it --rm --name coctl -v $(pwd)/:/work coctl:latest '
+docker build . -t opsani/coctl:latest
+alias coctl='docker run -it --rm --name coctl -v $(pwd)/:/work opsani/coctl:latest '
 ```
 
 ## Basic usage
@@ -32,16 +32,18 @@ alias coctl='docker run -it --rm --name coctl -v $(pwd)/:/work coctl:latest '
 Export the configuration (or pass as CLI parameters):
 
 ```bash
+cat > ~/opsani.env <<EOF
 export CO_TOKEN=ASFDASDFASDFASDF
-export CO_DOMAIN=domain.name
+export CO_ACCOUNT=domain.name
 export CO_APP=app.name
+EOF
+source ~/opsani.env
 ```
 
 For Docker use, set an alias _after_ setting the environment variables, and you won't have to pass the env variables:
 
 ```bash
-alias coctl="docker run -it --rm --name coctl -v $(pwd)/:/work/ -e CO_TOKEN=$CO_TOKEN -e CO_DOMAIN=$CO_DOMAIN -e CO_APP=$CO_APP coctl:latest "
-```
+alias coctl='docker run -it --rm --name coctl -v $(pwd)/:/work/ -e CO_TOKEN=$CO_TOKEN -e CO_ACCOUNT=$CO_ACCOUNT -e CO_APP=$CO_APP opsani/coctl:latest '```
 
 ### Get config
 
@@ -63,7 +65,7 @@ Put a YAML config in `coconfig.yaml` to the app config first get the config, the
 
 ```bash
 coctl get
-coctl put
+coctl put -o
 ```
 
 For a YAML document with a specific `perf:` metric, update the `optimization:` configuration
@@ -77,8 +79,9 @@ EOF
 ```
 
 ```bash
-coctl put -f optimization.yaml
+coctl put -f optimization.yaml -r
 ```
+*NOTE:* the -r will cause the optimization process to restart
 
 ### Change just the optimiization
 
@@ -87,9 +90,4 @@ Restart the optimization:
 ```bash
 coctl restart
 ```
-
-## TODO
-
-1. Basic configuration validation
-2. Basic environment variable validation
-3. Remove the need for the --file option, treat as an argument instead
+stop and start are also options
