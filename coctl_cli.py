@@ -28,7 +28,7 @@ def cli(ctx,token,account,app):
     ctx.obj['app']=app
 
 @cli.command()
-@click.option('--file', '-f', type=click.File('w'), help='The name of the override config file or "coconfig.yaml" by default', default='coconfig.yaml')
+@click.option('--file', '-f', type=click.File('w'), help='The name of the override config file or "override.yaml" by default', default='override.yaml')
 @click.pass_context
 def get(ctx,file):
 
@@ -44,7 +44,7 @@ def get(ctx,file):
     #click.echo(f"The API response: {response.json()}")
 
 @cli.command()
-@click.option('--file', '-f', type=click.File('r'), help='The name of the overrid config file or "coconfig.yaml" by default', default='coconfig.yaml')
+@click.option('--file', '-f', type=click.File('r'), help='The name of the overrid config file or "override.yaml" by default', default='override.yaml')
 @click.option('--overwrite', '-o', help='Overwrite the API state', is_flag=True)
 @click.option('--restart', '-r', help='Restart Optimization', is_flag=True)
 @click.pass_context
