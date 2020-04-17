@@ -17,9 +17,9 @@ Licensed under the BSD-3-Clause license
 '''
 
 @click.group()
-@click.option('--token', '-t', help='The Optune app token (or CO_TOKEN environment variable)', envvar='CO_TOKEN')
-@click.option('--account', '-d', help='The Optune account (or CO_ACCOUNT enviornment varaible)', envvar='CO_ACCOUNT')
-@click.option('--app', '-a', help='The Optune application (or CO_APP environment variable)', envvar='CO_APP')
+@click.option('--token', '-t', help='The Optune app token (or CO_TOKEN environment variable)', envvar='CO_TOKEN', required=True)
+@click.option('--account', '-d', help='The Optune account (or CO_ACCOUNT enviornment varaible)', envvar='CO_ACCOUNT', required=True)
+@click.option('--app', '-a', help='The Optune application (or CO_APP environment variable)', envvar='CO_APP', required=True)
 @click.pass_context
 def cli(ctx,token,account,app):
     ctx.ensure_object(dict)
